@@ -23,7 +23,7 @@
         android:supportsRtl="true"
         android:persistent="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity" />
+        <activity android:name=".ui.SettingActivity" />
 
         <receiver
             android:name=".receiver.SMSReceiver"

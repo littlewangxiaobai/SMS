@@ -18,20 +18,27 @@ public class SMSRecordManager {
         ArrayList<SmsBean> SMSList = new ArrayList<SmsBean>();
 
         Cursor cursor = null;
-//        cursor = context.getContentResolver().query(Uri.parse("content://sms"), new String[] { "_id", "address", "read", "body", "date" }, "read = ? ", new String[] { "0" }, "date desc");
+//        cursor = context.getContentResolver()
+//                .query(Uri.parse("content://sms"),
+//                        new String[]{"_id", "address", "read", "body", "date"},
+//                        "read = ? ",
+//                        new String[]{"0"},
+//                        "date desc");
         cursor = context.getContentResolver().query(
                 Uri.parse("content://sms"),
                 new String[]{"_id", "address", "read", "body", "date"},
                 "",
                 new String[]{},
                 "date desc");
-        if (null == cursor) {
+        if (null == cursor ) {
+            return null;
+        }
+        if (!cursor.moveToFirst()) {
             cursor.close();
             return null;
         }
         Log.i(TAG, "m cursor count is " + cursor.getCount());
         Log.i(TAG, "m first is " + cursor.moveToFirst());
-
 
         SmsBean smsBean = new SmsBean(
                 cursor.getString(0),
@@ -53,7 +60,6 @@ public class SMSRecordManager {
             SMSList.add(temp);
             Log.e(TAG, "getAllRecord:  " + temp);
         }
-
 
 
         cursor.close();

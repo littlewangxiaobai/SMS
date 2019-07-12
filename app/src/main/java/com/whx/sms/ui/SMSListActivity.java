@@ -1,40 +1,39 @@
 package com.whx.sms.ui;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Telephony;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.whx.sms.R;
 import com.whx.sms.data.SMSRecordManager;
 import com.whx.sms.data.SmsBean;
 import com.whx.sms.receiver.SMSReceiver;
 import com.whx.sms.ui.adapter.SmsRecyclerAdapter;
-import com.whx.sms.util.PermissionsManager;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SMSListActivity extends AppCompatActivity implements SMSReceiver.SmsReceiveLinstener{
+public class SMSListActivity extends AppCompatActivity implements SMSReceiver.SmsReceiveLinstener {
 
     @BindView(R.id.rv_sms)
-    android.support.v7.widget.RecyclerView rvSms;
+    RecyclerView rvSms;
     ArrayList<SmsBean> smsList;
     SmsRecyclerAdapter adapter;
+    @BindView(R.id.tv_empty)
+    TextView tvEmpty;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,16 +47,26 @@ public class SMSListActivity extends AppCompatActivity implements SMSReceiver.Sm
         rvSms.setAdapter(adapter);
         SMSReceiver.setSmsReceiveLinstener(this);
 
+        showEmptyView();
+
 //        new SMSReceiver().startUrl(this,"","", System.currentTimeMillis());
     }
 
 
+    private void showEmptyView(){
+        if(smsList == null || smsList.size()==0){
+            tvEmpty.setVisibility(View.VISIBLE);
+        }else{
+            if(tvEmpty.getVisibility() != View.GONE){
+                tvEmpty.setVisibility(View.GONE);
+            }
+        }
+    }
 
-    private void requestDefaultSmsApp(){
+    private void requestDefaultSmsApp() {
         String defaultSmsApp = null;
         String currentPn = getPackageName();//获取当前程序包名
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT)
-        {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             defaultSmsApp = Telephony.Sms.getDefaultSmsPackage(this);//获取手机当前设置的默认短信应用的包名
         }
         if (!defaultSmsApp.equals(currentPn)) {
@@ -66,8 +75,6 @@ public class SMSListActivity extends AppCompatActivity implements SMSReceiver.Sm
             startActivity(intent);
         }
     }
-
-
 
 
     @Override
@@ -86,7 +93,7 @@ public class SMSListActivity extends AppCompatActivity implements SMSReceiver.Sm
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            this.startActivity(new Intent(this, MainActivity.class));
+            this.startActivity(new Intent(this, SettingActivity.class));
             return true;
         }
 
@@ -102,6 +109,7 @@ public class SMSListActivity extends AppCompatActivity implements SMSReceiver.Sm
                 smsList = new SMSRecordManager().getAllRecord(SMSListActivity.this);
                 adapter.setSmsData(smsList);
                 adapter.notifyDataSetChanged();
+                showEmptyView();
             }
         });
 

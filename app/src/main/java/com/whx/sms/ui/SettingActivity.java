@@ -16,7 +16,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity {
+public class SettingActivity extends AppCompatActivity {
 
     @BindView(R.id.et)
     EditText et;
